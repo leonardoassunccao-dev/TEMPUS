@@ -80,6 +80,43 @@ export default function App() {
   const [records, setRecords] = useState<PunchRecord[]>(loadRecords());
   const [showPunchModal, setShowPunchModal] = useState(false);
   const [editingRecord, setEditingRecord] = useState<PunchRecord | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  // PWA & Service Worker
+  useEffect(() => {
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('Service Worker registrado com sucesso'))
+          .catch((error) => console.warn('Service Worker falhou:', error));
+      });
+    }
+
+    // Capture Install Prompt
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setIsInstallable(false);
+      setDeferredPrompt(null);
+    }
+  };
 
   // Sync data to storage
   useEffect(() => { saveUser(user); }, [user]);
@@ -128,7 +165,16 @@ export default function App() {
               )}
               {view === 'journey' && <Journey config={config} onSave={setConfig} />}
               {view === 'report' && <Report records={records} config={config} />}
-              {view === 'settings' && <Settings user={user} setUser={setUser} records={records} setRecords={setRecords} />}
+              {view === 'settings' && (
+                <Settings 
+                  user={user} 
+                  setUser={setUser} 
+                  records={records} 
+                  setRecords={setRecords}
+                  isInstallable={isInstallable}
+                  onInstall={handleInstallClick}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -601,7 +647,7 @@ function Report({ records, config }: any) {
   );
 }
 
-function Settings({ user, setUser, records, setRecords }: any) {
+function Settings({ user, setUser, records, setRecords, isInstallable, onInstall }: any) {
   const [name, setName] = useState(user.name);
 
   const handleBackup = () => {
@@ -644,6 +690,29 @@ function Settings({ user, setUser, records, setRecords }: any) {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {isInstallable && (
+            <Card className="flex flex-col gap-6 bg-gradient-to-b from-white/[0.05] to-transparent border-white/[0.1] col-span-full">
+              <div className="flex items-start gap-4">
+                 <div className="bg-white/10 p-3 rounded-2xl border border-white/10">
+                   <Plus size={20} className="text-white" />
+                 </div>
+                 <div>
+                    <h4 className="font-display font-medium text-lg text-white tracking-tight">Instalar TEMPUS</h4>
+                    <p className="text-[10px] text-white/40 mt-1 font-medium uppercase tracking-wider">Adicione o app à sua tela de início para acesso rápido.</p>
+                 </div>
+              </div>
+              <Button onClick={onInstall} className="w-full text-[10px] font-black uppercase tracking-[0.15em]">Instalar Aplicativo</Button>
+            </Card>
+          )}
+
+          {!isInstallable && (
+            <Card className="flex flex-col gap-4 bg-transparent border-white/[0.03] col-span-full opacity-60">
+              <p className="text-[10px] text-white/30 text-center font-medium">
+                Caso a opção de instalação não apareça, abra o menu do navegador e toque em “Instalar app”.
+              </p>
+            </Card>
+          )}
+
           <Card className="flex flex-col gap-6 bg-transparent border-white/[0.05]">
             <div className="flex items-start gap-4">
                <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
