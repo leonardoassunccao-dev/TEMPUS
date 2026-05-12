@@ -88,9 +88,9 @@ export default function App() {
     // Register Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(() => console.log('Service Worker registrado com sucesso'))
-          .catch((error) => console.warn('Service Worker falhou:', error));
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+          .then(reg => console.log('TEMPUS SW registrado:', reg.scope))
+          .catch(err => console.warn('Erro ao registrar SW:', err));
       });
     }
 
