@@ -697,18 +697,19 @@ function Settings({ user, setUser, records, setRecords, isInstallable, onInstall
                    <Plus size={20} className="text-white" />
                  </div>
                  <div>
-                    <h4 className="font-display font-medium text-lg text-white tracking-tight">Instalar TEMPUS</h4>
-                    <p className="text-[10px] text-white/40 mt-1 font-medium uppercase tracking-wider">Adicione o app à sua tela de início para acesso rápido.</p>
+                    <h4 className="font-display font-medium text-lg text-white tracking-tight">Instalar Aplicativo</h4>
+                    <p className="text-[10px] text-white/40 mt-1 font-medium uppercase tracking-wider">Adicione o TEMPUS à sua tela de início para acesso rápido.</p>
                  </div>
               </div>
-              <Button onClick={onInstall} className="w-full text-[10px] font-black uppercase tracking-[0.15em]">Instalar Aplicativo</Button>
+              <Button onClick={onInstall} className="w-full text-[10px] font-black uppercase tracking-[0.15em]">Instalar TEMPUS</Button>
             </Card>
           )}
 
           {!isInstallable && (
             <Card className="flex flex-col gap-4 bg-transparent border-white/[0.03] col-span-full opacity-60">
-              <p className="text-[10px] text-white/30 text-center font-medium">
-                Caso a opção de instalação não apareça, abra o menu do navegador e toque em “Instalar app”.
+              <p className="text-[9px] text-white/20 text-center font-medium leading-relaxed">
+                A instalação direta via botão pode não estar disponível em todos os navegadores.<br />
+                Toque no menu do navegador (ou compartilhar no iOS) e selecione <span className="text-white">“Instalar app”</span> ou <span className="text-white">“Tela de Início”</span>.
               </p>
             </Card>
           )}
