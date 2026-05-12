@@ -85,15 +85,6 @@ export default function App() {
 
   // PWA & Service Worker
   useEffect(() => {
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(reg => console.log('TEMPUS SW registrado:', reg.scope))
-          .catch(err => console.warn('Erro ao registrar SW:', err));
-      });
-    }
-
     // Capture Install Prompt
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
