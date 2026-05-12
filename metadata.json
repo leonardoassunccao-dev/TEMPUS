@@ -1,0 +1,8 @@
+{
+  "name": "TEMPUS",
+  "description": "Plataforma executiva premium para gestão de jornada de trabalho, registro de ponto com OCR e auditoria de comprovantes.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
